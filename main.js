@@ -11,10 +11,10 @@ function O_I(x){
 	return x > 1 ? 1 : x < 0 ? 0 : x;
 }
 function viewLeft(element){
-	return element.getBoundingClientRect().left;
+	return element.getBoundingClientRect().left + element.style.borderWidth;
 }
 function viewTop(element){
-	return element.getBoundingClientRect().top;
+	return element.getBoundingClientRect().top + element.style.borderWidth;
 }
 function updateTouch(event){
 	try{
@@ -31,8 +31,8 @@ function updateTouch(event){
 		vaild[touch.identifier] = true;
 		touches.push({
 			id: touchid[touch.identifier],
-			x: Math.floor(-239.5 + 480 * O_I((touch.clientX - viewLeft(stage)) / stage.clientWidth)),
-			y: Math.floor(179.5 - 360 * O_I((touch.clientY - viewTop(stage)) / stage.clientHeight))
+			x: Math.floor(-240 + 480 * O_I((touch.clientX - viewLeft(stage)) / stage.clientWidth)),
+			y: Math.floor(180 - 360 * O_I((touch.clientY - viewTop(stage)) / stage.clientHeight))
 		});
 	}
 	for(var i in touchid){
@@ -40,6 +40,7 @@ function updateTouch(event){
 			delete touchid[i];
 		}
 	}
+	
 	}catch(e){alert(e.message)}
 }
 
