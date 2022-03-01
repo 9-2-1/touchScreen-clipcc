@@ -48,7 +48,7 @@ class TC_touch extends Extension {
 		api.addCategory({
 			categoryId: "touchScreen",
 			messageId: "touchScreen.category",
-			color: "#ff99ff"
+			color: "#ff33cc"
 		});
 
 		api.addBlock({
@@ -98,6 +98,27 @@ class TC_touch extends Extension {
 			param: {}
 		});
 		
+		api.addBlock({
+			opcode: "touchdown",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.touchdown",
+			categoryId: "touchScreen",
+			function: function(args){
+				for(var i=0;i<touches.length;i++){
+					if(touches[i].id===Number(args.POINT)){
+						return true;
+					}
+				}
+				return false;
+			},
+			param: {
+				POINT: {
+					type: type.ParameterType.NUMBER,
+					default: '0'
+				}
+			}
+		});
+
 		api.addBlock({
 			opcode: "touchx",
 			type: type.BlockType.REPORTER,

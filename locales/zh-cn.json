@@ -5,6 +5,7 @@
 	"touchScreen.firstpoint": "第一根手指的序号",
 	"touchScreen.nextpoint": "手指 [PREV] 的下一根手指的序号",
 	"touchScreen.resetindex": "重置手指序号",
+	"touchScreen.touchdown": "手指 [POINT] 按下?",
 	"touchScreen.touchx": "手指 [POINT] 的x坐标",
 	"touchScreen.touchy": "手指 [POINT] 的y坐标",
 	"touchScreen.whentouchthestage": "当有手指点击舞台",

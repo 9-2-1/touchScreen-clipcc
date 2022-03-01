@@ -5,6 +5,7 @@
 	"touchScreen.firstpoint": "first finger",
 	"touchScreen.nextpoint": "next finger of [PREV]",
 	"touchScreen.resetindex": "reset finger id",
+	"touchScreen.touchdown": "finger [POINT] press?",
 	"touchScreen.touchx": "x position of [POINT]",
 	"touchScreen.touchy": "y position of [POINT]",
 	"touchScreen.whentouchthestage": "when stage tapped",
