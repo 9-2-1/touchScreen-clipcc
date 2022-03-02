@@ -10,8 +10,12 @@
 	"touchScreen.touchy": "y position of [POINT]",
 	"touchScreen.whentouchthestage": "when stage tapped",
 	"touchScreen.hastouchpoint": "finger press?",
-	"touchScreen.countpoint": "finger count",
+	"touchScreen.countpoint": "number of finger",
 	"touchScreen.istouchmode": "using a touch screen?",
 	"touchScreen.enablemouse": "Enable mouse",
-	"touchScreen.disablemouse": "Disable mouse"
+	"touchScreen.disablemouse": "Disable mouse",
+	"touchScreen.istouch": "touching finger?",
+	"touchScreen.counttouch": "number of touching finger",
+	"touchScreen.getfirsttouchpoint": "first touching finger",
+	"touchScreen.checktouchpoint": "touching finger [POINT]?"
 }

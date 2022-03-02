@@ -94,6 +94,21 @@ function updateList(){
 
 class TC_touch extends Extension {
 	onInit() {
+		stage = api.getStageCanvas() || document.querySelector("*[class*=stage_stage_] canvas");
+		if(!stage){
+			alert("touchScreen:\n" +
+			"无法定位舞台，所有积木的数值将为 0 或者 false。" +
+			"Cannot identify the stage, the return value of the extension will be 0 or false.");
+		}else{
+			stage.addEventListener('touchstart',updateTouch);
+			stage.addEventListener('touchmove',updateTouch);
+			stage.addEventListener('touchend',updateTouch);
+			stage.addEventListener('touchcancel',updateTouch);
+			stage.addEventListener('mousedown',updateMouse);
+			stage.addEventListener('mousemove',updateMouse);
+			stage.addEventListener('mouseup',updateMouse);
+		}
+		
 		api.addCategory({
 			categoryId: "touchScreen",
 			messageId: "touchScreen.category",
@@ -273,19 +288,83 @@ class TC_touch extends Extension {
 			param: {}
 		});
 
-		stage = document.querySelector("*[class*=stage_stage_] canvas");
-		if(!stage){
-			alert("无法定位舞台，多点触控插件加载失败。所有积木的数值将为 0 或者 false。");
-		}else{
-			stage.addEventListener('touchstart',updateTouch);
-			stage.addEventListener('touchmove',updateTouch);
-			stage.addEventListener('touchend',updateTouch);
-			stage.addEventListener('touchcancel',updateTouch);
-			stage.addEventListener('mousedown',updateMouse);
-			stage.addEventListener('mousemove',updateMouse);
-			stage.addEventListener('mouseup',updateMouse);
-		}
-		
+		api.addBlock({
+			opcode: "istouch",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.istouch",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					var touch = util.target.isTouchingPoint(
+						touches[i].x, touches[i].y);
+					if(touch){
+						return true;
+					}
+				}
+				return false;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "counttouch",
+			type: type.BlockType.REPORTER,
+			messageId: "touchScreen.counttouch",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				var count = 0;
+				for(var i=0;i<touches.length;i++){
+					var touch = util.target.isTouchingPoint(
+						touches[i].x, touches[i].y);
+					if(touch){
+						count++;
+					}
+				}
+				return count;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "getfirsttouchpoint",
+			type: type.BlockType.REPORTER,
+			messageId: "touchScreen.getfirsttouchpoint",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					var touch = util.target.isTouchingPoint(
+						touches[i].x, touches[i].y);
+					if(touch){
+						return touches[i].id;
+					}
+				}
+				return 0;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "checktouchpoint",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.checktouchpoint",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					if(touches[i].id===Number(args.POINT)){
+						return util.target.isTouchingPoint(
+							touches[i].x, touches[i].y);
+					}
+				}
+				return false;
+			},
+			param: {
+				POINT: {
+					type: type.ParameterType.NUMBER,
+					default: '0'
+				}
+			}
+		});
+
 		/* api.addBlock({
 			opcode: '...',
 			type: type.BlockType.xxx,

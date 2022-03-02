@@ -13,5 +13,9 @@
 	"touchScreen.countpoint": "按下的手指的个数",
 	"touchScreen.istouchmode": "使用的是触摸屏?",
 	"touchScreen.enablemouse": "启用鼠标代替触摸",
-	"touchScreen.disablemouse": "禁用鼠标代替触摸"
+	"touchScreen.disablemouse": "禁用鼠标代替触摸",
+	"touchScreen.istouch": "碰到手指?",
+	"touchScreen.counttouch": "碰到的手指个数",
+	"touchScreen.getfirsttouchpoint": "碰到的第一个手指的序号",
+	"touchScreen.checktouchpoint": "碰到手指 [POINT]?"
 }
