@@ -43,8 +43,7 @@ function updateTouch(event){
 			delete touchid[i];
 		}
 	}
-	
-	}catch(e){alert(e.message)}
+	}catch(e){alert(e.message);}
 }
 
 class TC_touch extends Extension {
@@ -224,10 +223,10 @@ class TC_touch extends Extension {
 	onUninit(){
 		api.removeCategory("touchScreen");
 		if(stage){
-			stage.addEventListener('touchstart',updateTouch);
-			stage.addEventListener('touchmove',updateTouch);
-			stage.addEventListener('touchend',updateTouch);
-			stage.addEventListener('touchcancel',updateTouch);
+			stage.removeEventListener('touchstart',updateTouch);
+			stage.removeEventListener('touchmove',updateTouch);
+			stage.removeEventListener('touchend',updateTouch);
+			stage.removeEventListener('touchcancel',updateTouch);
 		}
 	}
 }
