@@ -11,6 +11,7 @@
 	"touchScreen.whentouchthestage": "当有手指点击舞台",
 	"touchScreen.hastouchpoint": "手指按下?",
 	"touchScreen.countpoint": "按下的手指的个数",
+	"touchScreen.istouchmode": "使用的是触摸屏?",
 	"touchScreen.enablemouse": "启用鼠标代替触摸",
 	"touchScreen.disablemouse": "禁用鼠标代替触摸"
 }

@@ -11,6 +11,7 @@
 	"touchScreen.whentouchthestage": "when stage tapped",
 	"touchScreen.hastouchpoint": "finger press?",
 	"touchScreen.countpoint": "finger count",
+	"touchScreen.istouchmode": "using a touch screen?",
 	"touchScreen.enablemouse": "Enable mouse",
 	"touchScreen.disablemouse": "Disable mouse"
 }

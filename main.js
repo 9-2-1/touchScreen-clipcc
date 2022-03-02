@@ -10,17 +10,17 @@ var newTouch = false;
 var evTouchList = [];
 var evMouse = {down:false};
 var enableMouse = false;
+var isTouchMode = false;
 function clamp(x, min, max){
 	return x > max ? max : x < min ? min : x;
 }
 function updateTouch(event){
+	isTouchMode = true;
 	evTouchList = event.targetTouches;
 	updateList();
 }
 function updateMouse(event){
-	if(!enableMouse){
-		return;
-	}
+	isTouchMode = false;
 	var rect = stage.getBoundingClientRect();
 	switch(event.type){
 		case "mouseup":
@@ -47,7 +47,20 @@ function updateList(){
 		touchList.push(evTouchList[i]);
 	}
 	if(evMouse.down){
-		touchList.push(evMouse);
+		var haveTouch = false;
+		for(var i=0;i<touchList.length;i++){
+			if(touchList[i].clientX === evMouse.clientX
+			&& touchList[i].clientY === evMouse.clientY){
+				haveTouch = true;
+			}
+		}
+		if(haveTouch){
+			isTouchMode = true;
+		}else{
+			if(enableMouse){
+				touchList.push(evMouse);
+			}
+		}
 	}
 	for(var i=0;i<touchList.length;i++){
 		var touch = touchList[i];
@@ -229,11 +242,20 @@ class TC_touch extends Extension {
 		});
 
 		api.addBlock({
+			opcode: "istouchmode",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.istouchmode",
+			categoryId: "touchScreen",
+			function: function(){return isTouchMode;},
+			param: {}
+		});
+
+		api.addBlock({
 			opcode: "enablemouse",
 			type: type.BlockType.COMMAND,
 			messageId: "touchScreen.enablemouse",
 			categoryId: "touchScreen",
-			function: function(args){
+			function: function(){
 				enableMouse = true;
 			},
 			param: {}
@@ -244,7 +266,7 @@ class TC_touch extends Extension {
 			type: type.BlockType.COMMAND,
 			messageId: "touchScreen.disablemouse",
 			categoryId: "touchScreen",
-			function: function(args){
+			function: function(){
 				evMouse.down = false;
 				enableMouse = false;
 			},
