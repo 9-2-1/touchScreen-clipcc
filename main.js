@@ -239,7 +239,7 @@ class TC_touch extends Extension {
 			categoryId: "touchScreen",
 			function: function(){
 				if(newExpireTime === null){
-					newExpireTime = setTimeout(newExpire,1);
+					newExpireTime = setTimeout(newExpire,30);
 				}
 				return newTouch.length !== 0;
 			},
