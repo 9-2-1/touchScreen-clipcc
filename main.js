@@ -331,7 +331,12 @@ class TC_touch extends Extension {
 				}
 				return false;
 			},
-			param: {}
+			param: {
+				POINT: {
+					type: type.ParameterType.NUMBER,
+					default: '0'
+				}
+			}
 		});
 
 		api.addBlock({
@@ -404,7 +409,7 @@ class TC_touch extends Extension {
 							return touches[i].id;
 						}
 					}else{
-						if(touches[i].id === args.POINT){
+						if(touches[i].id === args.PREV){
 							found = true;
 						}
 					}
@@ -412,7 +417,7 @@ class TC_touch extends Extension {
 				return 0;
 			},
 			param: {
-				POINT: {
+				PREV: {
 					type: type.ParameterType.NUMBER,
 					default: '0'
 				}
