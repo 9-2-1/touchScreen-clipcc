@@ -1,6 +1,6 @@
-# touchScreen 多点触控 - ClipCC (Scratch 修改版本) 拓展
+# touchScreen 多点触控 - [ClipCC](https://codingclip.com/editor/stable) (Scratch 修改版本) 拓展
 
-让 ClipCC 作品能够支持多点触控
+让 [ClipCC](https://codingclip.com/editor/stable) 作品能够支持多点触控
 
 ---
 
