@@ -71,6 +71,7 @@ function updateList(){
 		}
 		vaild[touch.identifier] = true;
 		touches.push({
+			isFinger: !touch.down,
 			id: touchid[touch.identifier],
 			x: clamp(
 				Math.round(480 * ((touch.clientX - rect.left) / rect.width - 0.5)),
@@ -291,6 +292,22 @@ class TC_touch extends Extension {
 		});
 
 		api.addBlock({
+			opcode: "ismouse",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.ismouse",
+			categoryId: "touchScreen",
+			function: function(args){
+				for(var i=0;i<touches.length;i++){
+					if(touches[i].id === Number(args.POINT)){
+						return !touches[i].isFinger;
+					}
+				}
+				return false;
+			},
+			param: {}
+		});
+
+		api.addBlock({
 			opcode: "istouch",
 			type: type.BlockType.BOOLEAN,
 			messageId: "touchScreen.istouch",
@@ -343,6 +360,36 @@ class TC_touch extends Extension {
 				return 0;
 			},
 			param: {}
+		});
+
+		api.addBlock({
+			opcode: "getnexttouchpoint",
+			type: type.BlockType.REPORTER,
+			messageId: "touchScreen.getnexttouchpoint",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				var found = false;
+				for(var i=0;i<touches.length;i++){
+					if(found){
+						var touch = util.target.isTouchingPoint(
+							touches[i].clientX, touches[i].clientY);
+						if(touch){
+							return touches[i].id;
+						}
+					}else{
+						if(touches[i].id === args.POINT){
+							found = true;
+						}
+					}
+				}
+				return 0;
+			},
+			param: {
+				POINT: {
+					type: type.ParameterType.NUMBER,
+					default: '0'
+				}
+			}
 		});
 
 		api.addBlock({

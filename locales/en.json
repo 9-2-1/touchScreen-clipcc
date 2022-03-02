@@ -14,8 +14,10 @@
 	"touchScreen.istouchmode": "using a touch screen?",
 	"touchScreen.enablemouse": "Enable mouse",
 	"touchScreen.disablemouse": "Disable mouse",
+	"touchScreen.ismouse": "is finger [POINT] acually a mouse?",
 	"touchScreen.istouch": "touching finger?",
 	"touchScreen.counttouch": "number of touching finger",
 	"touchScreen.getfirsttouchpoint": "first touching finger",
+	"touchScreen.getnexttouchpoint": "next touching finger of [PREV]",
 	"touchScreen.checktouchpoint": "touching finger [POINT]?"
 }
