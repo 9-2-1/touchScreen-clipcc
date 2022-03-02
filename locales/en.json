@@ -9,6 +9,7 @@
 	"touchScreen.touchx": "x position of [POINT]",
 	"touchScreen.touchy": "y position of [POINT]",
 	"touchScreen.whentouchthestage": "when stage tapped",
+	"touchScreen.whentouchthesprite": "when sprite tapped",
 	"touchScreen.hastouchpoint": "finger press?",
 	"touchScreen.countpoint": "number of finger",
 	"touchScreen.istouchmode": "using a touch screen?",

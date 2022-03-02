@@ -9,6 +9,7 @@
 	"touchScreen.touchx": "手指 [POINT] 的x坐标",
 	"touchScreen.touchy": "手指 [POINT] 的y坐标",
 	"touchScreen.whentouchthestage": "当有手指点击舞台",
+	"touchScreen.whentouchthesprite": "当有手指点击角色",
 	"touchScreen.hastouchpoint": "手指按下?",
 	"touchScreen.countpoint": "按下的手指的个数",
 	"touchScreen.istouchmode": "使用的是触摸屏?",

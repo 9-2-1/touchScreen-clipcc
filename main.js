@@ -6,11 +6,12 @@ var stage;
 var touches = [];
 var touchid = {};
 var touchLastid = 1;
-var newTouch = false;
+var newTouch = {};
 var evTouchList = [];
 var evMouse = {down:false};
 var enableMouse = false;
 var isTouchMode = false;
+var newExpireTime = null;
 function clamp(x, min, max){
 	return x > max ? max : x < min ? min : x;
 }
@@ -65,7 +66,7 @@ function updateList(){
 	for(var i=0;i<touchList.length;i++){
 		var touch = touchList[i];
 		if(!(touch.identifier in touchid)){
-			newTouch = true;
+			newTouch[touchLastid] = true;
 			touchid[touch.identifier] = touchLastid;
 			touchLastid++;
 		}
@@ -94,7 +95,10 @@ function updateList(){
 	}
 	}catch(e){alert(e.message);}
 }
-
+function newExpire(){
+	newTouch = {};
+	newExpireTime = null;
+}
 class TC_touch extends Extension {
 	onInit() {
 		stage = api.getStageCanvas() || document.querySelector("*[class*=stage_stage_] canvas");
@@ -160,7 +164,7 @@ class TC_touch extends Extension {
 				touches = [];
 				touchid = {};
 				touchLastid = 1;
-				newTouch = false;
+				newTouch = {};
 			},
 			param: {}
 		});
@@ -234,9 +238,32 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.whentouchthestage",
 			categoryId: "touchScreen",
 			function: function(){
-				var value = newTouch;
-				newTouch = false;
-				return value;
+				if(newExpireTime === null){
+					newExpireTime = setTimeout(newExpire,1);
+				}
+				return newTouch.length !== 0;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "whentouchthesprite",
+			type: type.BlockType.HAT,
+			messageId: "touchScreen.whentouchthesprite",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					if(touches[i].id in newTouch){
+						var touch = util.target.isTouchingPoint(
+							touches[i].clientX, touches[i].clientY);
+						if(touch){
+							return true;
+						}
+					}
+				}
+				if(newExpireTime === null){
+					newExpireTime = setTimeout(newExpire,1);
+				}
 			},
 			param: {}
 		});
