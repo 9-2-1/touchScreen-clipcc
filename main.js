@@ -81,7 +81,9 @@ function updateList(){
 				Math.round(-360 * ((touch.clientY - rect.top) / rect.height - 0.5)),
 				-180,
 				180
-			)
+			),
+			clientX: touch.clientX - rect.left,
+			clientY: touch.clientY - rect.top
 		});
 	}
 	for(var i in touchid){
@@ -296,7 +298,7 @@ class TC_touch extends Extension {
 			function: function(args, util){
 				for(var i=0;i<touches.length;i++){
 					var touch = util.target.isTouchingPoint(
-						touches[i].x, touches[i].y);
+						touches[i].clientX, touches[i].clientY);
 					if(touch){
 						return true;
 					}
@@ -315,7 +317,7 @@ class TC_touch extends Extension {
 				var count = 0;
 				for(var i=0;i<touches.length;i++){
 					var touch = util.target.isTouchingPoint(
-						touches[i].x, touches[i].y);
+						touches[i].clientX, touches[i].clientY);
 					if(touch){
 						count++;
 					}
@@ -333,7 +335,7 @@ class TC_touch extends Extension {
 			function: function(args, util){
 				for(var i=0;i<touches.length;i++){
 					var touch = util.target.isTouchingPoint(
-						touches[i].x, touches[i].y);
+						touches[i].clientX, touches[i].clientY);
 					if(touch){
 						return touches[i].id;
 					}
@@ -352,7 +354,7 @@ class TC_touch extends Extension {
 				for(var i=0;i<touches.length;i++){
 					if(touches[i].id===Number(args.POINT)){
 						return util.target.isTouchingPoint(
-							touches[i].x, touches[i].y);
+							touches[i].clientX, touches[i].clientY);
 					}
 				}
 				return false;
