@@ -4,12 +4,13 @@
 	"touchScreen.category": "Touch Screen",
 	"touchScreen.firstpoint": "first finger",
 	"touchScreen.nextpoint": "next finger of [PREV]",
-	"touchScreen.resetindex": "reset finger id",
+	"touchScreen.resetindex": "Reset finger id",
 	"touchScreen.touchdown": "finger [POINT] press?",
 	"touchScreen.touchx": "x position of [POINT]",
 	"touchScreen.touchy": "y position of [POINT]",
 	"touchScreen.whentouchthestage": "when stage tapped",
 	"touchScreen.hastouchpoint": "finger press?",
-	"touchScreen.countpoint": "finger count"
+	"touchScreen.countpoint": "finger count",
+	"touchScreen.enablemouse": "Enable mouse",
+	"touchScreen.disablemouse": "Disable mouse"
 }
-
