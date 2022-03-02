@@ -7,17 +7,12 @@ var touches = [];
 var touchid = {};
 var touchLastid = 1;
 var newTouch = false;
-function O_I(x){
-	return x > 1 ? 1 : x < 0 ? 0 : x;
-}
-function viewLeft(element){
-	return element.getBoundingClientRect().left + element.style.borderWidth;
-}
-function viewTop(element){
-	return element.getBoundingClientRect().top + element.style.borderWidth;
+function clamp(x, min, max){
+	return x > max ? max : x < min ? min : x;
 }
 function updateTouch(event){
 	try{
+	var rect = stage.getBoundingClientRect();
 	var list = event.targetTouches;
 	var vaild = {};
 	touches = [];
@@ -31,8 +26,16 @@ function updateTouch(event){
 		vaild[touch.identifier] = true;
 		touches.push({
 			id: touchid[touch.identifier],
-			x: Math.floor(-240 + 480 * O_I((touch.clientX - viewLeft(stage)) / stage.clientWidth)),
-			y: Math.floor(180 - 360 * O_I((touch.clientY - viewTop(stage)) / stage.clientHeight))
+			x: clamp(
+				Math.round(480 * ((touch.clientX - rect.left) / rect.width - 0.5)),
+				-240,
+				240
+			),
+			y: clamp(
+				Math.round(-360 * ((touch.clientY - rect.top) / rect.height - 0.5)),
+				-180,
+				180
+			)
 		});
 	}
 	for(var i in touchid){
@@ -193,15 +196,15 @@ class TC_touch extends Extension {
 			param: {}
 		});
 
-		stage = document.querySelector("*[class*=stage_stage_]");
+		stage = document.querySelector("*[class*=stage_stage_] canvas");
 		if(!stage){
-			alert("无法加载此插件");
+			alert("无法定位舞台，多点触控插件加载失败。所有积木的数值将为 0 或者 false。");
+		}else{
+			stage.addEventListener('touchstart',updateTouch);
+			stage.addEventListener('touchmove',updateTouch);
+			stage.addEventListener('touchend',updateTouch);
+			stage.addEventListener('touchcancel',updateTouch);
 		}
-		stage.addEventListener('touchstart',updateTouch);
-		stage.addEventListener('touchmove',updateTouch);
-		stage.addEventListener('touchend',updateTouch);
-		stage.addEventListener('touchcancel',updateTouch);
-		
 		
 		/* api.addBlock({
 			opcode: '...',
@@ -220,6 +223,12 @@ class TC_touch extends Extension {
 
 	onUninit(){
 		api.removeCategory("touchScreen");
+		if(stage){
+			stage.addEventListener('touchstart',updateTouch);
+			stage.addEventListener('touchmove',updateTouch);
+			stage.addEventListener('touchend',updateTouch);
+			stage.addEventListener('touchcancel',updateTouch);
+		}
 	}
 }
 module.exports = TC_touch;
