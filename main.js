@@ -7,17 +7,63 @@ var touches = [];
 var touchid = {};
 var touchLastid = 1;
 var newTouch = false;
+var evTouchList = [];
+var evMouse = {down:false};
+var enableMouse = false;
+var isTouchMode = false;
 function clamp(x, min, max){
 	return x > max ? max : x < min ? min : x;
 }
 function updateTouch(event){
-	try{
+	isTouchMode = true;
+	evTouchList = event.targetTouches;
+	updateList();
+}
+function updateMouse(event){
+	isTouchMode = false;
 	var rect = stage.getBoundingClientRect();
-	var list = event.targetTouches;
+	switch(event.type){
+		case "mouseup":
+			evMouse.down = false;
+			break;
+		case "mousedown":
+			evMouse.down = true;
+			evMouse.identifier = Math.random();
+			// break;
+		case "mousemove":
+			evMouse.clientX = event.clientX;
+			evMouse.clientY = event.clientY;
+			break;
+	}
+	updateList();
+}
+function updateList(){
+	try{
 	var vaild = {};
 	touches = [];
-	for(var i=0;i<list.length;i++){
-		var touch = list[i];
+	var rect = stage.getBoundingClientRect();
+	var touchList = [];
+	for(var i=0;i<evTouchList.length;i++){
+		touchList.push(evTouchList[i]);
+	}
+	if(evMouse.down){
+		var haveTouch = false;
+		for(var i=0;i<touchList.length;i++){
+			if(touchList[i].clientX === evMouse.clientX
+			&& touchList[i].clientY === evMouse.clientY){
+				haveTouch = true;
+			}
+		}
+		if(haveTouch){
+			isTouchMode = true;
+		}else{
+			if(enableMouse){
+				touchList.push(evMouse);
+			}
+		}
+	}
+	for(var i=0;i<touchList.length;i++){
+		var touch = touchList[i];
 		if(!(touch.identifier in touchid)){
 			newTouch = true;
 			touchid[touch.identifier] = touchLastid;
@@ -35,7 +81,9 @@ function updateTouch(event){
 				Math.round(-360 * ((touch.clientY - rect.top) / rect.height - 0.5)),
 				-180,
 				180
-			)
+			),
+			clientX: touch.clientX - rect.left,
+			clientY: touch.clientY - rect.top
 		});
 	}
 	for(var i in touchid){
@@ -48,6 +96,21 @@ function updateTouch(event){
 
 class TC_touch extends Extension {
 	onInit() {
+		stage = api.getStageCanvas() || document.querySelector("*[class*=stage_stage_] canvas");
+		if(!stage){
+			alert("touchScreen:\n" +
+			"无法定位舞台，所有积木的数值将为 0 或者 false。" +
+			"Cannot identify the stage, the return value of the extension will be 0 or false.");
+		}else{
+			stage.addEventListener('touchstart',updateTouch);
+			stage.addEventListener('touchmove',updateTouch);
+			stage.addEventListener('touchend',updateTouch);
+			stage.addEventListener('touchcancel',updateTouch);
+			stage.addEventListener('mousedown',updateMouse);
+			stage.addEventListener('mousemove',updateMouse);
+			stage.addEventListener('mouseup',updateMouse);
+		}
+		
 		api.addCategory({
 			categoryId: "touchScreen",
 			messageId: "touchScreen.category",
@@ -195,16 +258,115 @@ class TC_touch extends Extension {
 			param: {}
 		});
 
-		stage = document.querySelector("*[class*=stage_stage_] canvas");
-		if(!stage){
-			alert("无法定位舞台，多点触控插件加载失败。所有积木的数值将为 0 或者 false。");
-		}else{
-			stage.addEventListener('touchstart',updateTouch);
-			stage.addEventListener('touchmove',updateTouch);
-			stage.addEventListener('touchend',updateTouch);
-			stage.addEventListener('touchcancel',updateTouch);
-		}
-		
+		api.addBlock({
+			opcode: "istouchmode",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.istouchmode",
+			categoryId: "touchScreen",
+			function: function(){return isTouchMode;},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "enablemouse",
+			type: type.BlockType.COMMAND,
+			messageId: "touchScreen.enablemouse",
+			categoryId: "touchScreen",
+			function: function(){
+				enableMouse = true;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "disablemouse",
+			type: type.BlockType.COMMAND,
+			messageId: "touchScreen.disablemouse",
+			categoryId: "touchScreen",
+			function: function(){
+				evMouse.down = false;
+				enableMouse = false;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "istouch",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.istouch",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					var touch = util.target.isTouchingPoint(
+						touches[i].clientX, touches[i].clientY);
+					if(touch){
+						return true;
+					}
+				}
+				return false;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "counttouch",
+			type: type.BlockType.REPORTER,
+			messageId: "touchScreen.counttouch",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				var count = 0;
+				for(var i=0;i<touches.length;i++){
+					var touch = util.target.isTouchingPoint(
+						touches[i].clientX, touches[i].clientY);
+					if(touch){
+						count++;
+					}
+				}
+				return count;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "getfirsttouchpoint",
+			type: type.BlockType.REPORTER,
+			messageId: "touchScreen.getfirsttouchpoint",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					var touch = util.target.isTouchingPoint(
+						touches[i].clientX, touches[i].clientY);
+					if(touch){
+						return touches[i].id;
+					}
+				}
+				return 0;
+			},
+			param: {}
+		});
+
+		api.addBlock({
+			opcode: "checktouchpoint",
+			type: type.BlockType.BOOLEAN,
+			messageId: "touchScreen.checktouchpoint",
+			categoryId: "touchScreen",
+			function: function(args, util){
+				for(var i=0;i<touches.length;i++){
+					if(touches[i].id===Number(args.POINT)){
+						return util.target.isTouchingPoint(
+							touches[i].clientX, touches[i].clientY);
+					}
+				}
+				return false;
+			},
+			param: {
+				POINT: {
+					type: type.ParameterType.NUMBER,
+					default: '0'
+				}
+			}
+		});
+
 		/* api.addBlock({
 			opcode: '...',
 			type: type.BlockType.xxx,
@@ -227,6 +389,9 @@ class TC_touch extends Extension {
 			stage.removeEventListener('touchmove',updateTouch);
 			stage.removeEventListener('touchend',updateTouch);
 			stage.removeEventListener('touchcancel',updateTouch);
+			stage.removeEventListener('mousedown',updateMouse);
+			stage.removeEventListener('mousemove',updateMouse);
+			stage.removeEventListener('mouseup',updateMouse);
 		}
 	}
 }
