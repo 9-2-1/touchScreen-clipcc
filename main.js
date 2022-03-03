@@ -2,16 +2,16 @@ var __webpack_modules__ = ({
 "./index.js": ((module, __unused_webpack_exports, __webpack_require__) => {
 const { Extension, type, api } = __webpack_require__("clipcc-extension");
 // --- index.js 开始 ---
-var stage;
-var touches = [];
-var touchid = {};
-var touchLastid = 1;
-var newTouch = {};
-var evTouchList = [];
-var evMouse = {down:false};
-var enableMouse = false;
-var isTouchMode = false;
-var newExpireTime = null;
+let stage;
+let touches = [];
+let touchid = {};
+let touchLastid = 1;
+let newTouch = {};
+let evTouchList = [];
+let evMouse = {down:false};
+let enableMouse = false;
+let isTouchMode = false;
+let newExpireTime = null;
 function clamp(x, min, max){
 	return x > max ? max : x < min ? min : x;
 }
@@ -21,8 +21,8 @@ function updateTouch(event){
 	updateList();
 }
 function updateMouse(event){
+	let rect = stage.getBoundingClientRect();
 	isTouchMode = false;
-	var rect = stage.getBoundingClientRect();
 	switch(event.type){
 		case "mouseup":
 			evMouse.down = false;
@@ -40,16 +40,16 @@ function updateMouse(event){
 }
 function updateList(){
 	try{
-	var vaild = {};
+	let vaild = {};
+	let rect = stage.getBoundingClientRect();
+	let touchList = [];
 	touches = [];
-	var rect = stage.getBoundingClientRect();
-	var touchList = [];
-	for(var i=0;i<evTouchList.length;i++){
+	for(let i=0;i<evTouchList.length;i++){
 		touchList.push(evTouchList[i]);
 	}
 	if(evMouse.down){
-		var haveTouch = false;
-		for(var i=0;i<touchList.length;i++){
+		let haveTouch = false;
+		for(let i=0;i<touchList.length;i++){
 			if(touchList[i].clientX === evMouse.clientX
 			&& touchList[i].clientY === evMouse.clientY){
 				haveTouch = true;
@@ -63,8 +63,8 @@ function updateList(){
 			}
 		}
 	}
-	for(var i=0;i<touchList.length;i++){
-		var touch = touchList[i];
+	for(let i=0;i<touchList.length;i++){
+		let touch = touchList[i];
 		if(!(touch.identifier in touchid)){
 			newTouch[touchLastid] = true;
 			touchid[touch.identifier] = touchLastid;
@@ -88,7 +88,7 @@ function updateList(){
 			clientY: touch.clientY - rect.top
 		});
 	}
-	for(var i in touchid){
+	for(let i in touchid){
 		if(!vaild[i]){
 			delete touchid[i];
 		}
@@ -139,7 +139,7 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.nextpoint",
 			categoryId: "touchScreen",
 			function: function(args){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id===Number(args.PREV)){
 						return i===touches.length-1 ?
 							0 : touches[i+1].id;
@@ -175,7 +175,7 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.touchdown",
 			categoryId: "touchScreen",
 			function: function(args){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id===Number(args.POINT)){
 						return true;
 					}
@@ -196,7 +196,7 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.touchx",
 			categoryId: "touchScreen",
 			function: function(args){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id===Number(args.POINT)){
 						return touches[i].x;
 					}
@@ -217,7 +217,7 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.touchy",
 			categoryId: "touchScreen",
 			function: function(args){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id===Number(args.POINT)){
 						return touches[i].y;
 					}
@@ -252,9 +252,9 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.whentouchthesprite",
 			categoryId: "touchScreen",
 			function: function(args, util){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id in newTouch){
-						var touch = util.target.isTouchingPoint(
+						let touch = util.target.isTouchingPoint(
 							touches[i].clientX, touches[i].clientY);
 						if(touch){
 							return true;
@@ -324,7 +324,7 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.ismouse",
 			categoryId: "touchScreen",
 			function: function(args){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id === Number(args.POINT)){
 						return !touches[i].isFinger;
 					}
@@ -345,8 +345,8 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.istouch",
 			categoryId: "touchScreen",
 			function: function(args, util){
-				for(var i=0;i<touches.length;i++){
-					var touch = util.target.isTouchingPoint(
+				for(let i=0;i<touches.length;i++){
+					let touch = util.target.isTouchingPoint(
 						touches[i].clientX, touches[i].clientY);
 					if(touch){
 						return true;
@@ -363,9 +363,9 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.counttouch",
 			categoryId: "touchScreen",
 			function: function(args, util){
-				var count = 0;
-				for(var i=0;i<touches.length;i++){
-					var touch = util.target.isTouchingPoint(
+				let count = 0;
+				for(let i=0;i<touches.length;i++){
+					let touch = util.target.isTouchingPoint(
 						touches[i].clientX, touches[i].clientY);
 					if(touch){
 						count++;
@@ -382,8 +382,8 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.getfirsttouchpoint",
 			categoryId: "touchScreen",
 			function: function(args, util){
-				for(var i=0;i<touches.length;i++){
-					var touch = util.target.isTouchingPoint(
+				for(let i=0;i<touches.length;i++){
+					let touch = util.target.isTouchingPoint(
 						touches[i].clientX, touches[i].clientY);
 					if(touch){
 						return touches[i].id;
@@ -400,10 +400,10 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.getnexttouchpoint",
 			categoryId: "touchScreen",
 			function: function(args, util){
-				var found = false;
-				for(var i=0;i<touches.length;i++){
+				let found = false;
+				for(let i=0;i<touches.length;i++){
 					if(found){
-						var touch = util.target.isTouchingPoint(
+						let touch = util.target.isTouchingPoint(
 							touches[i].clientX, touches[i].clientY);
 						if(touch){
 							return touches[i].id;
@@ -430,7 +430,7 @@ class TC_touch extends Extension {
 			messageId: "touchScreen.checktouchpoint",
 			categoryId: "touchScreen",
 			function: function(args, util){
-				for(var i=0;i<touches.length;i++){
+				for(let i=0;i<touches.length;i++){
 					if(touches[i].id===Number(args.POINT)){
 						return util.target.isTouchingPoint(
 							touches[i].clientX, touches[i].clientY);
