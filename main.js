@@ -11,7 +11,7 @@ var __webpack_modules__ = ({
 		let touchid = {};
 		let touchLastid = 1;
 		let touchTheStage = false;
-		let newTouch = {};
+		let touchedTarget = [];
 		let evTouchList = [];
 		let evMouse = {
 			down: false
@@ -19,6 +19,7 @@ var __webpack_modules__ = ({
 		let enableMouse = false;
 		let isTouchMode = false;
 		let newExpireTime = null;
+		let scratchVM = null;
 
 		function clamp(x, min, max) {
 			return x > max ? max : x < min ? min : x;
@@ -78,7 +79,14 @@ var __webpack_modules__ = ({
 					let touch = touchList[i];
 					if (!(touch.identifier in touchid)) {
 						touchTheStage = true;
-						newTouch[touchLastid] = true;
+						/* console.log(
+							touch.clientX - rect.left,
+							touch.clientY - rect.top
+						); */
+						touchedTarget.push(pickTarget(
+							touch.clientX - rect.left,
+							touch.clientY - rect.top
+						));
 						touchid[touch.identifier] = touchLastid;
 						touchLastid++;
 					}
@@ -110,9 +118,28 @@ var __webpack_modules__ = ({
 			}
 		}
 
+		// scratch-vm/io/mouse.js:40
+		function pickTarget(x, y) {
+			if (scratchVM.runtime.renderer) {
+				const drawableID = scratchVM.runtime.renderer.pick(x, y);
+				// console.log("wjw",drawableID);
+				for (let i = 0; i < scratchVM.runtime.targets.length; i++) {
+					const target = scratchVM.runtime.targets[i];
+					// console.log(target.drawableID);
+					if (target.hasOwnProperty('drawableID') &&
+						target.drawableID === drawableID) {
+						// console.log("haha",target.drawableID);
+						return target;
+					}
+				}
+			}
+			// Return the stage if no target was found
+			return scratchVM.runtime.getTargetForStage();
+		}
 		class TC_touch extends Extension {
 			onInit() {
 				stage = api.getStageCanvas() || document.querySelector("*[class*=stage_stage_] canvas");
+				scratchVM = api.getVmInstance();
 				if (!stage) {
 					alert("six6.touchScreen:\n" +
 						"无法定位舞台，所有积木的数值将为 0 或者 false。" +
@@ -131,7 +158,7 @@ var __webpack_modules__ = ({
 				touchid = {};
 				touchLastid = 1;
 				touchTheStage = false;
-				newTouch = {};
+				touchedTarget = [];
 				evTouchList = [];
 				evMouse = {
 					down: false
@@ -188,7 +215,7 @@ var __webpack_modules__ = ({
 						touches = [];
 						touchid = {};
 						touchLastid = 1;
-						newTouch = {};
+						touchedTarget = [];
 					},
 					param: {}
 				});
@@ -257,38 +284,17 @@ var __webpack_modules__ = ({
 				});
 
 				api.addBlock({
-					opcode: "six6.touchScreen.whentouchthestage",
-					type: type.BlockType.HAT,
-					messageId: "six6.touchScreen.whentouchthestage",
-					categoryId: "six6.touchScreen",
-					function: function() {
-						if (touchTheStage) {
-							touchTheStage = false;
-							return true;
-						}
-						return false;
-					},
-					param: {}
-				});
-
-				api.addBlock({
 					opcode: "six6.touchScreen.whentouchthesprite",
 					type: type.BlockType.HAT,
 					messageId: "six6.touchScreen.whentouchthesprite",
 					categoryId: "six6.touchScreen",
 					function: function(args, util) {
-						for (let i = 0; i < touches.length; i++) {
-							if (touches[i].id in newTouch) {
-								delete newTouch[touches[i].id];
-								let touch = util.target.isTouchingPoint(
-									touches[i].clientX, touches[i].clientY);
-								if (touch) {
-									return true;
-								}
-							}
-						}
-						if (newExpireTime === null) {
-							newExpireTime = setTimeout(newExpire, 1);
+						let tidx = touchedTarget.indexOf(util.target);
+						if (tidx === -1) {
+							return false;
+						} else {
+							touchedTarget.splice(tidx, 1);
+							return true;
 						}
 					},
 					param: {}
